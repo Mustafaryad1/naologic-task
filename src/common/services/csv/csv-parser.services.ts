@@ -28,7 +28,7 @@ export class CsvImportService implements OnModuleInit {
       fs.createReadStream(filePath)
         .pipe(csv({ separator: '\t' }))
         .on('data', (data: CsvProductInterface) => {
-          if (itemBatch.length < 10000) itemBatch.push(data);
+          if (itemBatch.length < 5000) itemBatch.push(data);
           else {
             const data = this.groupDataByProductId(itemBatch);
             this.productsQueue.add(
