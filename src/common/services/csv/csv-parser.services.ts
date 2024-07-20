@@ -19,19 +19,25 @@ export class CsvImportService implements OnModuleInit {
   }
 
   async importProductsCsv(): Promise<void> {
+    let itemBatch = [];
     return new Promise((resolve, reject) => {
       const filePath = path.join(
         __dirname,
         '../../../../src/products/data/images40.csv',
       );
-      let counter = 0;
       fs.createReadStream(filePath)
         .pipe(csv({ separator: '\t' }))
         .on('data', (data: CsvProductInterface) => {
-          this.productsQueue.add(
-            BULL_QUEUE_QUEUES.PRODUCTS.JOBS.HANDLE_CSV_PRODUCT,
-            data,
-          );
+          if (itemBatch.length < 1000) itemBatch.push(data);
+          else {
+            const data = this.groupDataByProductId(itemBatch);
+            this.productsQueue.add(
+              BULL_QUEUE_QUEUES.PRODUCTS.JOBS.HANDLE_CSV_PRODUCT,
+              data,
+            );
+            itemBatch = [];
+            
+          }
         })
         .on('end', async () => {
           try {
@@ -44,5 +50,17 @@ export class CsvImportService implements OnModuleInit {
           reject(error);
         });
     });
+  }
+
+  groupDataByProductId(data: CsvProductInterface[]): any {
+    const groupedData = data.reduce((acc, curr) => {
+      const productId = curr.ProductID;
+      if (!acc[productId]) {
+        acc[productId] = [];
+      }
+      acc[productId].push(curr);
+      return acc;
+    }, {});
+    return groupedData;
   }
 }

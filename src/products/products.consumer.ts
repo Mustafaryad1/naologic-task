@@ -13,13 +13,15 @@ export class ProductsConsumer extends WorkerHost {
   async process(job: Job): Promise<any> {
     switch (job.name) {
       case BULL_QUEUE_QUEUES.PRODUCTS.JOBS.HANDLE_CSV_PRODUCT: {
-        const data: CsvProductInterface = job.data;
-        if (data.IsDeleted) {
-          //handle delete operation
-        } else {
-          const product = await this.productService.updateOrCreateProduct(data);
-          await this.productService.createItem(data, product);
-        }
+        const items: CsvProductInterface[] = Object.values(
+          job.data,
+        ).flat() as CsvProductInterface[];
+
+        await Promise.all(
+          items.map((csvProduct) => {
+            return this.productService.createItem(csvProduct);
+          }),
+        );
       }
       default: {
         break;

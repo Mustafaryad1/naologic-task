@@ -61,7 +61,9 @@ export class ProductsService {
     });
   }
 
-  async createItem(data: CsvProductInterface, product: Product) {
+  async createItem(data: CsvProductInterface) {
+    const product = await this.updateOrCreateProduct(data);
+
     return this.productVariantModel.create({
       product: product._id,
       manufacturerItemId: data.ItemID,
