@@ -30,6 +30,7 @@
     "@nestjs/schedule": "^4.1.0",
     "bullmq": "^5.10.3",
     "csv-parser": "^3.0.0",
+    "langchain": "^0.2.10",
     "mongoose": "^8.5.1",
     "nanoid": "^5.0.7",
     "reflect-metadata": "^0.1.13",
