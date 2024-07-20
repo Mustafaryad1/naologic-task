@@ -29,7 +29,7 @@ export class CsvImportService implements OnModuleInit {
         .pipe(csv({ separator: '\t' }))
         .on('data', (data: CsvProductInterface) => {
           this.productsQueue.add(
-            BULL_QUEUE_QUEUES.PRODUCTS.JOBS.CREATE_PRODUCT,
+            BULL_QUEUE_QUEUES.PRODUCTS.JOBS.HANDLE_CSV_PRODUCT,
             data,
           );
         })

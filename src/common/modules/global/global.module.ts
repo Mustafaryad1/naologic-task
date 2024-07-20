@@ -8,6 +8,7 @@ import { CsvImportService } from 'src/common/services/csv/csv-parser.services';
   imports: [
     BullModule.registerQueue({
       name: BULL_QUEUE_QUEUES.PRODUCTS.NAME,
+      defaultJobOptions: BULL_QUEUE_QUEUES.PRODUCTS.OPTIONS,
     }),
   ],
   providers: [CsvImportService],
