@@ -17,12 +17,12 @@ export class ProductsConsumer extends WorkerHost {
         if (data.IsDeleted) {
           //handle delete operation
         } else {
-          await this.productService.updateOrCreateProduct(data);
+          const product = await this.productService.updateOrCreateProduct(data);
+          await this.productService.createItem(data, product);
         }
-        return {};
       }
       default: {
-        return {};
+        break;
       }
     }
   }
