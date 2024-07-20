@@ -13,13 +13,11 @@ export class ProductsConsumer extends WorkerHost {
   async process(job: Job): Promise<any> {
     switch (job.name) {
       case BULL_QUEUE_QUEUES.PRODUCTS.JOBS.HANDLE_CSV_PRODUCT: {
-        const items: CsvProductInterface[] = Object.values(
-          job.data,
-        ).flat() as CsvProductInterface[];
+        const items = Object.values(job.data);
 
         await Promise.all(
-          items.map((csvProduct) => {
-            return this.productService.createItem(csvProduct);
+          items.map((csvProduct: CsvProductInterface[]) => {
+            return this.productService.createItems(csvProduct);
           }),
         );
       }

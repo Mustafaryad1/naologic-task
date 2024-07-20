@@ -61,30 +61,33 @@ export class ProductsService {
     });
   }
 
-  async createItem(data: CsvProductInterface) {
-    const product = await this.updateOrCreateProduct(data);
+  async createItems(data: CsvProductInterface[]) {
+    const product = await this.updateOrCreateProduct(data[0]);
 
-    return this.productVariantModel.create({
-      product: product._id,
-      manufacturerItemId: data.ItemID,
-      manufacturerItemCode: data.ManufacturerItemCode,
-      cost: data.UnitPrice,
-      price: data.UnitPrice,
-      packaging: data.PKG,
-      currency: 'USD',
-      description: data.ItemDescription,
-      attributes: {
-        packaging: data.PKG,
-        description: data.ItemDescription,
-      },
-      sku: data.NDCItemCode,
-      images: [
-        {
-          fileName: data.ImageFileName,
-          cdnLink: data.ItemImageURL,
-          i: 0,
+    return this.productVariantModel.insertMany(
+      data.map((item) => ({
+        product: product._id,
+        manufacturerItemId: item.ItemID,
+        manufacturerItemCode: item.ManufacturerItemCode,
+        cost: item.UnitPrice,
+        price: item.UnitPrice,
+        packaging: item.PKG,
+        currency: 'USD',
+        description: item.ItemDescription,
+        attributes: {
+          packaging: item.PKG,
+          description: item.ItemDescription,
         },
-      ],
-    });
+        sku: item.NDCItemCode,
+        images: [
+          {
+            fileName: item.ImageFileName,
+            cdnLink: item.ItemImageURL,
+            i: 0,
+          },
+        ],
+      })),
+      { ordered: true },
+    );
   }
 }

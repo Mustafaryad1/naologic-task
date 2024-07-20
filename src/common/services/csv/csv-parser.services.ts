@@ -28,7 +28,7 @@ export class CsvImportService implements OnModuleInit {
       fs.createReadStream(filePath)
         .pipe(csv({ separator: '\t' }))
         .on('data', (data: CsvProductInterface) => {
-          if (itemBatch.length < 20000) itemBatch.push(data);
+          if (itemBatch.length < 10000) itemBatch.push(data);
           else {
             const data = this.groupDataByProductId(itemBatch);
             this.productsQueue.add(
@@ -36,11 +36,18 @@ export class CsvImportService implements OnModuleInit {
               data,
             );
             itemBatch = [];
-            
           }
         })
         .on('end', async () => {
           try {
+            if (itemBatch.length) {
+              const data = this.groupDataByProductId(itemBatch);
+              await this.productsQueue.add(
+                BULL_QUEUE_QUEUES.PRODUCTS.JOBS.HANDLE_CSV_PRODUCT,
+                data,
+              );
+              itemBatch = [];
+            }
             resolve();
           } catch (error) {
             reject(error);
