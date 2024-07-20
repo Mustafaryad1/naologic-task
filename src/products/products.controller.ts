@@ -8,7 +8,8 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Cron('45 * * * * *')
-  handleCron() {
-    this.logger.verbose('Called when the current second is 45');
+  handleUploadCSVProductsCronJob() {
+    this.logger.debug('Start uploading products from csv file');
+    this.productsService.handleUploadCSVProductsCronJob();
   }
 }
