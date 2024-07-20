@@ -25,4 +25,5 @@ export interface CsvProductInterface {
   CategoryName: string;
   IsRX: string;
   IsTBD: string;
+  IsDeleted: string;
 }
