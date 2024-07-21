@@ -14,4 +14,5 @@ export const BULL_QUEUE_QUEUES = {
 export const MONGO_COLLECTIONS = {
   PRODUCTS: 'products',
   PRODUCTS_VARIANTS: 'product_variants',
+  VENDORS: 'vendors',
 };

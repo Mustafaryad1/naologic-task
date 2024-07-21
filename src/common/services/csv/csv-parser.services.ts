@@ -16,6 +16,8 @@ export class CsvImportService {
 
   async importProductsCsv(): Promise<void> {
     let itemBatch = [];
+    let vendors = new Set();
+    let products = new Set();
     return new Promise((resolve, reject) => {
       const filePath = path.join(
         __dirname,
@@ -24,6 +26,9 @@ export class CsvImportService {
       fs.createReadStream(filePath)
         .pipe(csv({ separator: '\t' }))
         .on('data', (data: CsvProductInterface) => {
+          vendors.add(data.ManufacturerID);
+          products.add(data.ProductID);
+
           if (itemBatch.length < 5000) itemBatch.push(data);
           else {
             const data = this.groupDataByProductId(itemBatch);
@@ -44,6 +49,7 @@ export class CsvImportService {
               );
               itemBatch = [];
             }
+            //TODO: publish products to vendors
 
             resolve();
           } catch (error) {
