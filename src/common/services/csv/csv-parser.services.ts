@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as csv from 'csv-parser';
@@ -8,15 +8,11 @@ import { Queue } from 'bullmq';
 import { BULL_QUEUE_QUEUES } from 'src/common/constants';
 
 @Injectable()
-export class CsvImportService implements OnModuleInit {
+export class CsvImportService {
   constructor(
     @InjectQueue(BULL_QUEUE_QUEUES.PRODUCTS.NAME)
     private productsQueue: Queue,
   ) {}
-
-  async onModuleInit() {
-    await this.importProductsCsv();
-  }
 
   async importProductsCsv(): Promise<void> {
     let itemBatch = [];
@@ -48,6 +44,7 @@ export class CsvImportService implements OnModuleInit {
               );
               itemBatch = [];
             }
+
             resolve();
           } catch (error) {
             reject(error);

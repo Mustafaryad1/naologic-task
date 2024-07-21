@@ -8,6 +8,7 @@ import {
   ProductVariantDocument,
 } from './schemas/product-items.schema';
 import { CsvProductInterface } from 'src/common/interfaces/csv-interfaces/csv-product.interface';
+import { LangchainService } from 'src/common/services/langchain/langchain.service';
 
 @Injectable()
 export class ProductsService {
@@ -16,10 +17,25 @@ export class ProductsService {
     @InjectModel(Product.name) private productModel: Model<ProductDocument>,
     @InjectModel(ProductVariant.name)
     private productVariantModel: Model<ProductVariantDocument>,
+    private readonly langchainService: LangchainService,
   ) {}
 
   async handleUploadCSVProductsCronJob() {
     await this.csvImportService.importProductsCsv();
+    const products = await this.productModel.find().limit(10);
+
+    for (const product of products) {
+      const enhancedDescription =
+        await this.langchainService.enhanceDescription(
+          product.description,
+          product.name,
+          product.category,
+        );
+      await this.productModel.updateOne(
+        { _id: product._id },
+        { $set: { description: enhancedDescription } },
+      );
+    }
   }
 
   async updateOrCreateProduct(
@@ -39,6 +55,7 @@ export class ProductsService {
           manufacturerItemId: data.ManufacturerID,
           manufacturerName: data.ManufacturerName,
           availability: data.Availability,
+          category: data.CategoryName,
         },
         { new: true },
       );
@@ -51,6 +68,7 @@ export class ProductsService {
       manufacturerItemId: data.ManufacturerID,
       manufacturerName: data.ManufacturerName,
       availability: data.Availability,
+      category: data.CategoryName,
       images: [
         {
           fileName: data.ImageFileName,

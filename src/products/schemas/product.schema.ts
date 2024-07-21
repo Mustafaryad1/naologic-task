@@ -77,6 +77,9 @@ export class Product extends Document {
   @Prop({ default: '' })
   description: string;
 
+  @Prop({ default: '' })
+  category: string;
+
   @Prop({ default: 'members-only' })
   storefrontPriceVisibility: string;
 
