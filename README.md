@@ -39,6 +39,7 @@
   - `MONGO_DB_URI`: The URI for the MongoDB database.
   - `REDIS_PORT`: The port number for the Redis server.
   - `REDIS_HOST`: The host of the Redis server.
+  - `OPENAI_API_KEY` : The open ai api secret key.
 
   Please make sure to set these variables before running the application.
 
