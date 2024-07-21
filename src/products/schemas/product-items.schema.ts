@@ -101,3 +101,8 @@ export class ProductVariant extends Document {
 
 export const ProductVariantSchema =
   SchemaFactory.createForClass(ProductVariant);
+
+ProductVariantSchema.index(
+  { product: 1, manufacturerItemId: 1 },
+  { unique: true },
+);

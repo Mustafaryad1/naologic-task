@@ -92,8 +92,9 @@ export class ProductsService {
         packaging: item.PKG,
         currency: 'USD',
         description: item.ItemDescription,
+        itemCode: item.NDCItemCode,
         attributes: {
-          packaging: item.PKG,
+          packaging: item.PKG.toUpperCase(),
           description: item.ItemDescription,
         },
         sku: item.NDCItemCode,
